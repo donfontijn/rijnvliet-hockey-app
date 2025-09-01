@@ -157,96 +157,109 @@ export default function RijnvlietHockeyApp() {
               </div>
             </div>
             
-            {/* Hockey Field */}
-            <div className="relative bg-gray-300 rounded-lg p-4 mb-6">
-              <div className="aspect-[2/1] bg-gray-200 rounded border-4 border-white relative">
-                {/* Center line */}
-                <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white"></div>
-                {/* Center circle */}
-                <div className="absolute top-1/2 left-1/2 w-16 h-16 border-2 border-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
-                
-                {/* Goal areas - large semicircles */}
-                <div className="absolute top-0 left-1/2 w-32 h-16 border-2 border-white border-b-0 transform -translate-x-1/2 rounded-t-full"></div>
-                <div className="absolute bottom-0 left-1/2 w-32 h-16 border-2 border-white border-t-0 transform -translate-x-1/2 rounded-b-full"></div>
-                
-                {/* Player positions - 8 players on field */}
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((position) => {
-                  const player = selectedPlayers[position - 1];
-                  return (
-                    <div
-                      key={position}
-                      className={`absolute w-12 h-12 rounded-full border-2 border-white flex items-center justify-center text-white font-bold cursor-pointer ${
-                        player ? 'bg-blue-600' : 'bg-gray-400'
-                      }`}
-                      style={{
-                        top: position <= 4 ? '15%' : 
-                              position === 5 ? '35%' : 
-                              position === 6 ? '65%' : '85%',
-                        left: position === 1 ? '20%' : 
-                              position === 2 ? '40%' : 
-                              position === 3 ? '60%' : 
-                              position === 4 ? '80%' : 
-                              position === 5 ? '30%' : 
-                              position === 6 ? '70%' : 
-                              position === 7 ? '50%' : '50%'
-                      }}
-                      onClick={() => {
-                        if (player) {
-                          setSelectedPlayers(selectedPlayers.filter((_, i) => i !== position - 1));
-                        }
-                      }}
-                    >
-                      {player ? player.name.slice(0, 2) : position}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Player selection */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="font-bold mb-3">Beschikbare Spelers</h3>
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {fullRoster
-                    .filter(player => !selectedPlayers.includes(player))
-                    .map(player => (
-                      <div
-                        key={player.id}
-                        className="flex items-center gap-2 p-2 border rounded cursor-pointer hover:bg-gray-50"
-                        onClick={() => {
-                          if (selectedPlayers.length < 8) {
-                            setSelectedPlayers([...selectedPlayers, player]);
-                          }
-                        }}
-                      >
-                        <div 
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
-                          style={{ backgroundColor: player.color }}
+            {/* Hockey Field and Player Selection Layout */}
+            <div className="flex gap-6">
+              {/* Hockey Field - Left side, narrower */}
+              <div className="flex-1">
+                <div className="relative bg-gray-300 rounded-lg p-4">
+                  <div className="aspect-[1/1] bg-gray-200 rounded border-4 border-white relative">
+                    {/* Center line */}
+                    <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white"></div>
+                    {/* Center circle */}
+                    <div className="absolute top-1/2 left-1/2 w-12 h-12 border-2 border-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+                    
+                    {/* Goal areas - large semicircles */}
+                    <div className="absolute top-0 left-1/2 w-24 h-12 border-2 border-white border-b-0 transform -translate-x-1/2 rounded-t-full"></div>
+                    <div className="absolute bottom-0 left-1/2 w-24 h-12 border-2 border-white border-t-0 transform -translate-x-1/2 rounded-b-full"></div>
+                    
+                    {/* Field markings - penalty areas */}
+                    <div className="absolute top-0 left-1/2 w-16 h-8 border-2 border-white border-b-0 transform -translate-x-1/2"></div>
+                    <div className="absolute bottom-0 left-1/2 w-16 h-8 border-2 border-white border-t-0 transform -translate-x-1/2"></div>
+                    
+                    {/* Player positions - 8 players on field */}
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((position) => {
+                      const player = selectedPlayers[position - 1];
+                      return (
+                        <div
+                          key={position}
+                          className={`absolute w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-white font-bold cursor-pointer ${
+                            player ? 'bg-blue-600' : 'bg-gray-400'
+                          }`}
+                          style={{
+                            top: position <= 4 ? '12%' : 
+                                  position === 5 ? '32%' : 
+                                  position === 6 ? '68%' : '88%',
+                            left: position === 1 ? '18%' : 
+                                  position === 2 ? '38%' : 
+                                  position === 3 ? '62%' : 
+                                  position === 4 ? '82%' : 
+                                  position === 5 ? '28%' : 
+                                  position === 6 ? '72%' : 
+                                  position === 7 ? '50%' : '50%'
+                          }}
+                          onClick={() => {
+                            if (player) {
+                              setSelectedPlayers(selectedPlayers.filter((_, i) => i !== position - 1));
+                            }
+                          }}
                         >
-                          {player.name.slice(0, 2) }
+                          {player ? player.name.slice(0, 2) : position}
                         </div>
-                        <span className="text-sm">{player.name}</span>
-                      </div>
-                    ))}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-              
-              <div>
-                <h3 className="font-bold mb-3">Geselecteerde Spelers ({selectedPlayers.length}/8)</h3>
-                <div className="space-y-2">
-                  {selectedPlayers.map((player, index) => (
-                    <div key={player.id} className="flex items-center gap-2 p-2 bg-blue-50 border border-blue-200 rounded">
-                      <div 
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
-                        style={{ backgroundColor: player.color }}
-                      >
-                        {player.name.slice(0, 2)}
-                      </div>
-                      <span className="text-sm">{player.name}</span>
-                      <span className="text-xs text-gray-500">Positie {index + 1}</span>
+
+              {/* Player Selection - Right side */}
+              <div className="w-80">
+                <div className="space-y-4">
+                  {/* Available Players */}
+                  <div>
+                    <h3 className="font-bold mb-3 text-gray-700">Beschikbare Spelers</h3>
+                    <div className="space-y-2 max-h-48 overflow-y-auto border rounded-lg p-3 bg-gray-50">
+                      {fullRoster
+                        .filter(player => !selectedPlayers.includes(player))
+                        .map(player => (
+                          <div
+                            key={player.id}
+                            className="flex items-center gap-3 p-2 border rounded cursor-pointer hover:bg-white transition-colors"
+                            onClick={() => {
+                              if (selectedPlayers.length < 8) {
+                                setSelectedPlayers([...selectedPlayers, player]);
+                              }
+                            }}
+                          >
+                            <div 
+                              className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                              style={{ backgroundColor: player.color }}
+                            >
+                              {player.name.slice(0, 2)}
+                            </div>
+                            <span className="text-sm font-medium">{player.name}</span>
+                          </div>
+                        ))}
                     </div>
-                  ))}
+                  </div>
+                  
+                  {/* Selected Players */}
+                  <div>
+                    <h3 className="font-bold mb-3 text-gray-700">Geselecteerde Spelers ({selectedPlayers.length}/8)</h3>
+                    <div className="space-y-2 max-h-48 overflow-y-auto border rounded-lg p-3 bg-blue-50">
+                      {selectedPlayers.map((player, index) => (
+                        <div key={player.id} className="flex items-center gap-3 p-2 bg-white border border-blue-200 rounded">
+                          <div 
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                            style={{ backgroundColor: player.color }}
+                          >
+                            {player.name.slice(0, 2)}
+                          </div>
+                          <span className="text-sm font-medium">{player.name}</span>
+                          <span className="text-xs text-blue-600 font-medium bg-blue-100 px-2 py-1 rounded">Pos {index + 1}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
