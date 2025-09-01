@@ -18,13 +18,16 @@ export default function RijnvlietHockeyApp() {
   ]);
 
   const [matches, setMatches] = useState([
-    { id: 1, date: '2025-09-01', opponent: 'Lightning FC', ourScore: 3, theirScore: 1 },
-    { id: 2, date: '2025-09-08', opponent: 'Thunder United', ourScore: 1, theirScore: 2 },
-    { id: 3, date: '2025-09-15', opponent: 'Storm Rangers', ourScore: null, theirScore: null }
+    { id: 1, date: '2025-09-01', opponent: 'Lightning FC', ourScore: 3, theirScore: 1, lineup: [] },
+    { id: 2, date: '2025-09-08', opponent: 'Thunder United', ourScore: 1, theirScore: 2, lineup: [] },
+    { id: 3, date: '2025-09-15', opponent: 'Storm Rangers', ourScore: null, theirScore: null, lineup: [] }
   ]);
 
   const [viewMode, setViewMode] = useState('matches');
   const [editingPlayer, setEditingPlayer] = useState(null);
+  const [editingMatch, setEditingMatch] = useState(null);
+  const [selectedPlayers, setSelectedPlayers] = useState([]);
+  const [showingLineup, setShowingLineup] = useState(null);
 
   const syncToNotion = async () => {
     setSyncStatus('syncing');
@@ -98,6 +101,7 @@ export default function RijnvlietHockeyApp() {
           >
             Team
           </button>
+
         </div>
       </div>
 
@@ -107,7 +111,14 @@ export default function RijnvlietHockeyApp() {
             <h2 className="text-lg font-bold mb-4">Wedstrijden Overzicht</h2>
             <div className="space-y-3">
               {matches.map(match => (
-                <div key={match.id} className="border rounded-lg p-4">
+                <div 
+                  key={match.id} 
+                  className="border rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={() => {
+                    setShowingLineup(match);
+                    setSelectedPlayers(match.lineup || []);
+                  }}
+                >
                   <div className="font-bold text-lg">{match.date}</div>
                   <div className="text-gray-600 mb-1">Rijnvliet MO10-5 tegen {match.opponent}</div>
                   <div className={`inline-block px-3 py-1 rounded text-sm font-medium ${getMatchResult(match).color}`}>
@@ -115,6 +126,129 @@ export default function RijnvlietHockeyApp() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showingLineup && (
+        <div className="p-4">
+          <div className="bg-white rounded-lg shadow-lg p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold">Opstelling - {showingLineup.date} tegen {showingLineup.opponent}</h2>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowingLineup(null)}
+                  className="bg-gray-500 text-white px-3 py-2 rounded text-sm"
+                >
+                  Terug
+                </button>
+                <button
+                  onClick={() => {
+                    const updatedMatch = { ...showingLineup, lineup: selectedPlayers };
+                    setMatches(matches.map(m => m.id === updatedMatch.id ? updatedMatch : m));
+                    setShowingLineup(null);
+                    setSelectedPlayers([]);
+                  }}
+                  className="bg-green-600 text-white px-3 py-2 rounded text-sm"
+                >
+                  Opslaan
+                </button>
+              </div>
+            </div>
+            
+            {/* Hockey Field */}
+            <div className="relative bg-gray-300 rounded-lg p-4 mb-6">
+              <div className="aspect-[2/1] bg-gray-200 rounded border-4 border-white relative">
+                {/* Center line */}
+                <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white"></div>
+                {/* Center circle */}
+                <div className="absolute top-1/2 left-1/2 w-16 h-16 border-2 border-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+                
+                {/* Goal areas - large semicircles */}
+                <div className="absolute top-0 left-1/2 w-32 h-16 border-2 border-white border-b-0 transform -translate-x-1/2 rounded-t-full"></div>
+                <div className="absolute bottom-0 left-1/2 w-32 h-16 border-2 border-white border-t-0 transform -translate-x-1/2 rounded-b-full"></div>
+                
+                {/* Player positions - 8 players on field */}
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((position) => {
+                  const player = selectedPlayers[position - 1];
+                  return (
+                    <div
+                      key={position}
+                      className={`absolute w-12 h-12 rounded-full border-2 border-white flex items-center justify-center text-white font-bold cursor-pointer ${
+                        player ? 'bg-blue-600' : 'bg-gray-400'
+                      }`}
+                      style={{
+                        top: position <= 4 ? '15%' : 
+                              position === 5 ? '35%' : 
+                              position === 6 ? '65%' : '85%',
+                        left: position === 1 ? '20%' : 
+                              position === 2 ? '40%' : 
+                              position === 3 ? '60%' : 
+                              position === 4 ? '80%' : 
+                              position === 5 ? '30%' : 
+                              position === 6 ? '70%' : 
+                              position === 7 ? '50%' : '50%'
+                      }}
+                      onClick={() => {
+                        if (player) {
+                          setSelectedPlayers(selectedPlayers.filter((_, i) => i !== position - 1));
+                        }
+                      }}
+                    >
+                      {player ? player.name.slice(0, 2) : position}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Player selection */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h3 className="font-bold mb-3">Beschikbare Spelers</h3>
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {fullRoster
+                    .filter(player => !selectedPlayers.includes(player))
+                    .map(player => (
+                      <div
+                        key={player.id}
+                        className="flex items-center gap-2 p-2 border rounded cursor-pointer hover:bg-gray-50"
+                        onClick={() => {
+                          if (selectedPlayers.length < 8) {
+                            setSelectedPlayers([...selectedPlayers, player]);
+                          }
+                        }}
+                      >
+                        <div 
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                          style={{ backgroundColor: player.color }}
+                        >
+                          {player.name.slice(0, 2) }
+                        </div>
+                        <span className="text-sm">{player.name}</span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-bold mb-3">Geselecteerde Spelers ({selectedPlayers.length}/8)</h3>
+                <div className="space-y-2">
+                  {selectedPlayers.map((player, index) => (
+                    <div key={player.id} className="flex items-center gap-2 p-2 bg-blue-50 border border-blue-200 rounded">
+                      <div 
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                        style={{ backgroundColor: player.color }}
+                      >
+                        {player.name.slice(0, 2)}
+                      </div>
+                      <span className="text-sm">{player.name}</span>
+                      <span className="text-xs text-gray-500">Positie {index + 1}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -183,6 +317,8 @@ export default function RijnvlietHockeyApp() {
         </div>
       )}
 
+
+
       {editingPlayer && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
@@ -218,6 +354,73 @@ export default function RijnvlietHockeyApp() {
                 </button>
                 <button
                   onClick={() => setEditingPlayer(null)}
+                  className="flex-1 bg-gray-500 text-white py-2 rounded hover:bg-gray-600"
+                >
+                  Annuleren
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editingMatch && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-bold mb-4">Wedstrijd Bewerken</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Datum</label>
+                <input
+                  type="date"
+                  value={editingMatch.date}
+                  onChange={(e) => setEditingMatch({...editingMatch, date: e.target.value})}
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Tegenstander</label>
+                <input
+                  type="text"
+                  value={editingMatch.opponent}
+                  onChange={(e) => setEditingMatch({...editingMatch, opponent: e.target.value})}
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Onze Score</label>
+                  <input
+                    type="number"
+                    value={editingMatch.ourScore || ''}
+                    onChange={(e) => setEditingMatch({...editingMatch, ourScore: e.target.value ? parseInt(e.target.value) : null})}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    placeholder="Score"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Hun Score</label>
+                  <input
+                    type="number"
+                    value={editingMatch.theirScore || ''}
+                    onChange={(e) => setEditingMatch({...editingMatch, theirScore: e.target.value ? parseInt(e.target.value) : null})}
+                    className="w-full p-2 border border-gray-300 rounded"
+                    placeholder="Score"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setMatches(matches.map(m => m.id === editingMatch.id ? editingMatch : m));
+                    setEditingMatch(null);
+                  }}
+                  className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700"
+                >
+                  Opslaan
+                </button>
+                <button
+                  onClick={() => setEditingMatch(null)}
                   className="flex-1 bg-gray-500 text-white py-2 rounded hover:bg-gray-600"
                 >
                   Annuleren
