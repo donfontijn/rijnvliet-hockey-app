@@ -163,18 +163,12 @@ export default function RijnvlietHockeyApp() {
               <div className="flex-1">
                 <div className="relative bg-gray-300 rounded-lg p-4">
                   <div className="aspect-[1/1] bg-gray-200 rounded border-4 border-white relative">
-                    {/* Center line */}
-                    <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white"></div>
-                    {/* Center circle */}
-                    <div className="absolute top-1/2 left-1/2 w-12 h-12 border-2 border-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+                    {/* Center line - thick black line */}
+                    <div className="absolute top-1/2 left-0 right-0 h-1 bg-black"></div>
                     
-                    {/* Goal areas - large semicircles */}
-                    <div className="absolute top-0 left-1/2 w-24 h-12 border-2 border-white border-b-0 transform -translate-x-1/2 rounded-t-full"></div>
-                    <div className="absolute bottom-0 left-1/2 w-24 h-12 border-2 border-white border-t-0 transform -translate-x-1/2 rounded-b-full"></div>
-                    
-                    {/* Field markings - penalty areas */}
-                    <div className="absolute top-0 left-1/2 w-16 h-8 border-2 border-white border-b-0 transform -translate-x-1/2"></div>
-                    <div className="absolute bottom-0 left-1/2 w-16 h-8 border-2 border-white border-t-0 transform -translate-x-1/2"></div>
+                    {/* Goal areas - large semicircles touching the edges */}
+                    <div className="absolute top-0 left-0 right-0 h-1/2 border-2 border-black border-b-0 rounded-t-full"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-1/2 border-2 border-black border-t-0 rounded-b-full"></div>
                     
                     {/* Player positions - 8 players on field */}
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((position) => {
