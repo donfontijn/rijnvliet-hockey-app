@@ -161,7 +161,7 @@ export default function RijnvlietHockeyApp() {
             <div className="flex gap-6">
               {/* Hockey Field - Left side, using exact HTML/CSS from user */}
               <div className="flex-1">
-                <div className="relative bg-gray-300 rounded-lg p-4">
+                <div className="flex justify-center">
                   <div 
                     className="relative"
                     style={{
@@ -172,7 +172,6 @@ export default function RijnvlietHockeyApp() {
                       maxWidth: '400px',
                       aspectRatio: '330 / 501',
                       background: 'linear-gradient(#000, #000) center/100% var(--stroke) no-repeat, var(--bg)',
-                      margin: '5vh auto',
                       overflow: 'hidden'
                     }}
                   >
