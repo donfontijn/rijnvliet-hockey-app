@@ -159,22 +159,38 @@ export default function RijnvlietHockeyApp() {
             
             {/* Hockey Field and Player Selection Layout */}
             <div className="flex gap-6">
-              {/* Hockey Field - Left side, matching PNG exactly */}
+              {/* Hockey Field - Left side, using exact HTML/CSS from user */}
               <div className="flex-1">
                 <div className="relative bg-gray-300 rounded-lg p-4">
-                  <div className="aspect-[3/2] bg-gray-200 relative">
-                    {/* Center line - thick black line across the middle */}
-                    <div className="absolute top-1/2 left-0 right-0 h-2 bg-black transform -translate-y-1/2"></div>
+                  <div 
+                    className="relative"
+                    style={{
+                      '--bg': '#d9d9d9',
+                      '--stroke': '0.4vmin',
+                      '--diameter': '40vmin',
+                      width: '90%',
+                      maxWidth: '400px',
+                      aspectRatio: '330 / 501',
+                      background: 'linear-gradient(#000, #000) center/100% var(--stroke) no-repeat, var(--bg)',
+                      margin: '5vh auto',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    {/* Top circle, midpoint on top edge */}
+                    <div
+                      className="absolute left-1/2 w-[40vmin] h-[40vmin] border-[0.4vmin] border-black rounded-full bg-transparent transform -translate-x-1/2"
+                      style={{
+                        top: 'calc(-0.5 * 40vmin)'
+                      }}
+                    ></div>
                     
-                    {/* Top goal area - large semicircle spanning full width */}
-                    <div className="absolute top-0 left-0 right-0 h-1/2">
-                      <div className="w-full h-full border-4 border-black border-b-0 rounded-t-full"></div>
-                    </div>
-                    
-                    {/* Bottom goal area - large semicircle spanning full width */}
-                    <div className="absolute bottom-0 left-0 right-0 h-1/2">
-                      <div className="w-full h-full border-4 border-black border-t-0 rounded-b-full"></div>
-                    </div>
+                    {/* Bottom circle, midpoint on bottom edge */}
+                    <div
+                      className="absolute left-1/2 w-[40vmin] h-[40vmin] border-[0.4vmin] border-black rounded-full bg-transparent transform -translate-x-1/2"
+                      style={{
+                        bottom: 'calc(-0.5 * 40vmin)'
+                      }}
+                    ></div>
                     
                     {/* Player positions - 8 players on field */}
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((position) => {
