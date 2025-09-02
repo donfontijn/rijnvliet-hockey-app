@@ -144,6 +144,12 @@ export default function RijnvlietHockeyApp() {
                   Terug
                 </button>
                 <button
+                  onClick={() => setEditingMatch(showingLineup)}
+                  className="bg-blue-600 text-white px-3 py-2 rounded text-sm"
+                >
+                  Wedstrijd Bewerken
+                </button>
+                <button
                   onClick={() => {
                     const updatedMatch = { ...showingLineup, lineup: selectedPlayers };
                     setMatches(matches.map(m => m.id === updatedMatch.id ? updatedMatch : m));
